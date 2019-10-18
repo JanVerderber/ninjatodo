@@ -7,3 +7,5 @@ An example task management app using:
 - Datastore
 - ndb library
 
+#Jan testira <-
+
