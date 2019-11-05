@@ -1,0 +1,6 @@
+Flask
+google-cloud-datastore
+mock
+google-auth
+google-cloud-ndb
+pytest
