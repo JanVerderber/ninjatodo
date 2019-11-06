@@ -4,6 +4,7 @@ import mock
 from flask import Flask, render_template, request
 from google.cloud import datastore
 import google.auth.credentials
+from handlers import public
 
 
 app = Flask(__name__)
@@ -22,15 +23,9 @@ else:
     credentials = mock.Mock(spec=google.auth.credentials.Credentials)
     db = datastore.Client(project="test", credentials=credentials)
 
-
-@app.route("/", methods=["GET", "POST"])
-def index():
-    return render_template("index.html")
-
-@app.route("/test", methods=["GET"])
-def test():
-    return "NinjaTODO Test"
-
+app.add_url_rule(rule="/", endpoint="public.index", view_func=public.index, methods=["GET"])
+app.add_url_rule(rule="/login", endpoint="public.login", view_func=public.login, methods=["GET", "POST"])
+app.add_url_rule(rule="/register", endpoint="public.register", view_func=public.register, methods=["GET", "POST"])
 
 if __name__ == '__main__':
     if os.getenv('GAE_ENV', '').startswith('standard'):
