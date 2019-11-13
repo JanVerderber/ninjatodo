@@ -1,0 +1,21 @@
+{% extends lang+"/profile/base.html" %}
+
+{% block title %}Workspaces{% endblock title %}
+
+{% block scripts %}
+<script>
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+{% endblock scripts %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>My profile</h1>
+
+    <h3 class="mt-2">Workspaces</h3>
+
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#">Add new workspace</button>
+</div>
+{% endblock content %}

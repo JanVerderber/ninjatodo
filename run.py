@@ -2,6 +2,7 @@ import os
 import time
 import atexit
 import urllib.request
+import sys
 
 # Datastore emulator instance
 run_datastore = None
@@ -30,23 +31,33 @@ def emulator_started(port="8001"):
 # register the Exit handler
 atexit.register(exit_handler)
 
-# Ask user if they want to run a web app or tests
-test = input("Would you like to run tests? (yes/no; default is no): ")
+if "test" in sys.argv:
+    test = "yes"
+elif "app" in sys.argv:
+    test = "no"
+else:
+    # Ask user if they want to run a web app or tests
+    test = input("Would you like to run tests? (yes/no; default is no): ")
 
 # Prepare the correct port number and the main command based on the user's input
 if test == "yes":
     print("Preparing to run tests.")
     emulator_port = "8002"
     text_bottom = "tests"
+    os.environ["TESTING"] = "yes"
     main_command = "pytest -p no:warnings"
+    storage = "--no-store-on-disk"
 else:
     print("Preparing to run the web app.")
     emulator_port = "8001"
     text_bottom = "web app"
-    main_command = "export FLASK_APP=main.py && flask run --host localhost --port 8080 --reload"
+    os.environ["FLASK_APP"] = "main.py"
+    main_command = "flask run --host localhost --port 8080 --reload"
+    storage = "--data-dir=."
 
 # Run datastore emulator
-emulator_command = 'gcloud beta emulators datastore start --no-legacy --data-dir=. --project test --host-port "localhost:{}"'.format(emulator_port)
+emulator_command = 'gcloud beta emulators datastore start --consistency=1 {storage} --project test ' \
+                   '--host-port "localhost:{port}"'.format(storage=storage, port=emulator_port)
 run_datastore = os.popen(emulator_command)
 
 # wait for the Emulator to start

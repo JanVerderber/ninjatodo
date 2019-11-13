@@ -4,6 +4,8 @@ import logging
 
 from flask import request, abort, url_for, redirect
 
+from models.user import User
+
 
 def set_csrf(func):
     """Needs to be called AFTER @login_required or @admin_required."""
@@ -34,12 +36,12 @@ def validate_csrf(func):
 def public_handler(func):
     @functools.wraps(func)
     def wrapper(**params):
-        session_token = request.cookies.get("ninja-todo-session")
+        session_token = request.cookies.get("my-web-app-session")
 
         params["now"] = datetime.datetime.now()  # send current date to handler and HTML template
 
         if session_token:
-            user = User.get_by_session_token(session_token=session_token)
+            success, user, message = User.get_user_by_session_token(session_token=session_token)
             params["user"] = user
 
         return func(**params)
@@ -52,16 +54,18 @@ def login_required(func):
     def wrapper(**params):
         params["now"] = datetime.datetime.now()  # send current date to handler and HTML template
 
-        session_token = request.cookies.get("ninja-todo-session")
+        session_token = request.cookies.get("my-web-app-session")
 
         if session_token:
-            user = User.get_by_session_token(session_token=session_token)
+            success, user, message = User.get_user_by_session_token(session_token=session_token)
             params["user"] = user
 
             if user:
                 return func(**params)
+            else:
+                return abort(403, description=message)
 
-        return redirect(url_for("public.login"))
+        return redirect(url_for("public.auth.login"))
 
     return wrapper
 
@@ -69,20 +73,22 @@ def login_required(func):
 def admin_required(func):
     @functools.wraps(func)
     def wrapper(**params):
-        session_token = request.cookies.get("ninja-todo-session")
+        session_token = request.cookies.get("my-web-app-session")
 
         params["now"] = datetime.datetime.now()  # send current date to handler and HTML template
 
         if session_token:
-            user = User.get_by_session_token(session_token=session_token)
+            success, user, message = User.get_user_by_session_token(session_token=session_token)
             params["user"] = user
 
             if user and user.admin:
                 return func(**params)
             elif user:
                 logging.error("Non-admin user {username} wanted to access an admin-only page.".format(username=user.username))
-                return abort(403)
+                return abort(403, description="I'm sorry, but this is for admins only.")
+            else:
+                return abort(403, description=message)
 
-        return redirect(url_for("public.login"))
+        return redirect(url_for("public.auth.login"))
 
     return wrapper
