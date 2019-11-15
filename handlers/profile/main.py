@@ -28,3 +28,16 @@ def session_delete(**params):
 def workspaces(**params):
     if request.method == "GET":
         return render_template_with_translations("profile/main/workspaces.html", **params)
+
+    elif request.method == "POST":
+        title = request.form.get("title")
+        slug = request.form.get("slug")
+
+        if title and slug:
+            success, workspace, message = Workspace.create(title=title, slug=slug)
+
+            if success:
+                return render_template_with_translations("profile/main/workspaces.html", **params)
+            else:
+                params["register_error_message"] = message
+                return render_template_with_translations("profile/main/workspaces.html", **params)
