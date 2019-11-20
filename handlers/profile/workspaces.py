@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, redirect, url_for, abort
 
 from models.workspaces import Workspace
 from utils.decorators import login_required, set_csrf
@@ -13,4 +13,7 @@ def workspace_create(**params):
         if title and slug:
             success, workspace, message = Workspace.create(title=title, slug=slug)
 
-            return True, success, "Success"  # succes message
+            return redirect(url_for("profile.main.workspaces"))
+
+        else:
+            return abort(403, description="Please enter title and slug")
