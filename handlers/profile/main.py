@@ -34,7 +34,7 @@ def workspaces(**params):
         slug = request.form.get("slug")
 
         if title and slug:
-            success, workspace, message = Workspace.create(title=title, slug=slug)
+            success, workspaces, message = Workspace.create(title=title, slug=slug)
 
             if success:
                 return render_template_with_translations("profile/main/workspaces.html", **params)
