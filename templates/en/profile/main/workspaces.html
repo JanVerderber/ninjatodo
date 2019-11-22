@@ -41,6 +41,7 @@ $(function () {
                     <label for="slug">Slug</label>
                     <input type="text" class="form-control" id="slug" name="slug" placeholder="Enter slug">
                 </div>
+                <input type="hidden" name="csrf" value="{{ csrf }}">
                 <button type="submit" class="btn btn-success">Submit</button>
             </form>
           </div>
