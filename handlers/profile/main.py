@@ -1,7 +1,6 @@
 from flask import request, redirect, url_for
 
 from models.user import User
-from models.workspaces import Workspace
 from utils.decorators import login_required, set_csrf, validate_csrf
 from utils.translations import render_template_with_translations
 
@@ -21,23 +20,3 @@ def session_delete(**params):
         User.delete_session(user=params["user"], token_hash_five_chars=token_hash_five_chars)
 
         return redirect(url_for("profile.main.sessions_list"))
-
-
-@login_required
-@set_csrf
-def workspaces(**params):
-    if request.method == "GET":
-        return render_template_with_translations("profile/main/workspaces.html", **params)
-
-    elif request.method == "POST":
-        title = request.form.get("title")
-        slug = request.form.get("slug")
-
-        if title and slug:
-            success, workspaces, message = Workspace.create(title=title, slug=slug)
-
-            if success:
-                return render_template_with_translations("profile/main/workspaces.html", **params)
-            else:
-                params["register_error_message"] = message
-                return render_template_with_translations("profile/main/workspaces.html", **params)

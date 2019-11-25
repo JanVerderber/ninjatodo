@@ -5,6 +5,7 @@ from handlers.admin import users
 from handlers.profile.auth import logout
 from handlers.public import main as public_main, auth
 from handlers.profile import main as profile_main
+from handlers.profile import workspaces as profile_workspaces
 from tasks.send_email_task import send_email_via_sendgrid
 from utils.check_environment import is_local
 from utils.fake_data import load_fake_data
@@ -28,8 +29,10 @@ app.add_url_rule(rule="/profile", endpoint="profile.main.sessions_list", view_fu
                  methods=["GET"])
 app.add_url_rule(rule="/profile/session/delete", endpoint="profile.main.session_delete",
                  view_func=profile_main.session_delete, methods=["POST"])
-app.add_url_rule(rule="/workspaces", endpoint="profile.main.workspaces", view_func=profile_main.workspaces,
-                 methods=["GET", "POST"])
+app.add_url_rule(rule="/workspaces", endpoint="profile.workspaces.workspaces_list_handler", view_func=profile_workspaces.workspaces_list_handler,
+                 methods=["GET"])
+app.add_url_rule(rule="/workspace/create", endpoint="profile.workspaces.workspace_create", view_func=profile_workspaces.workspace_create,
+                 methods=["POST"])
 
 # PROFILE auth
 app.add_url_rule(rule="/logout", endpoint="profile.auth.logout", view_func=logout, methods=["POST"])
