@@ -94,6 +94,9 @@ ipython_config.py
 #   install all needed dependencies.
 #Pipfile.lock
 
+#idea files
+.idea
+
 # celery beat schedule file
 celerybeat-schedule
 
