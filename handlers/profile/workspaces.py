@@ -22,7 +22,7 @@ def workspace_create(**params):
         user_id = user.get_id
 
         if title and slug:
-            workspace = Workspace.create(title=title, slug=slug)
+            result, workspace, message = Workspace.create(title=title, slug=slug)
             workspace_id = workspace.get_id
 
             if workspace:
