@@ -14,15 +14,14 @@ class WorkspaceUser(ndb.Model):
     def create(cls, id_workspace, id_user):
         with client.context():
             # check if there's any entries with the same data already
-            workspace_id_check = cls.query(cls.id_workspace == id_workspace).get()
-            user_id_check = cls.query(cls.id_user == id_user).get()
+            id_check = cls.query(cls.id_workspace == id_workspace, cls. id_user == id_user).get()
 
-            if not workspace_id_check and user_id_check:  # if entry does not yet exist, create one
+            if not id_check:  # if entry does not yet exist, create one
 
                 # create the workspace object and store it into Datastore
                 workspace_user = cls(id_workspace=id_workspace, id_user=id_user)
                 workspace_user.put()
 
-                return "Success"  # succes, workspace, message
+                return True, workspace_user, "Success"  # succes, workspace, message
             else:
-                return "Workspace and user relation is already created. Please try again with new workspace and user."
+                return False, None, "Workspace and user relation is already created. Please try again with new workspace and user."

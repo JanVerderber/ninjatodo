@@ -27,6 +27,6 @@ class Workspace(ndb.Model):
                 workspace = cls(title=title, slug=slug)
                 workspace.put()
 
-                return "Success"  # succes, workspace, message
+                return True, workspace, "Success"  # succes, workspace, message
             else:
-                return "Workspace with this slug is already created. Please try again with new slug."
+                return False, None, "Workspace with this slug is already created. Please try again with new slug."

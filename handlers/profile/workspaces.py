@@ -23,9 +23,9 @@ def workspace_create(**params):
 
         if title and slug:
             workspace = Workspace.create(title=title, slug=slug)
+            workspace_id = workspace.get_id
 
             if workspace:
-                workspace_id = workspace.get_id
                 WorkspaceUser.create(id_workspace=workspace_id, id_user=user_id)
 
                 return redirect(url_for("profile.workspaces.workspaces_list_handler"))
