@@ -1,6 +1,6 @@
 from flask import request, redirect, url_for, abort
 
-from models.workspaces import Workspace
+from models.workspace import Workspace
 from models.workspace_user import WorkspaceUser
 from models.user import User
 from utils.decorators import login_required, set_csrf, validate_csrf
@@ -9,7 +9,17 @@ from utils.translations import render_template_with_translations
 @login_required
 @set_csrf
 def workspaces_list_handler(**params):
-    if request.method == "GET":
+    cursor_arg = request.args.get('cursor')
+
+    if cursor_arg:
+        cursor = Cursor(urlsafe=cursor_arg.encode())
+    else:
+        cursor = None
+
+    params["workspaces"] = Workspace.fetch(limit=10, cursor=cursor)
+
+    if not cursor_arg:
+        # normal browser get request
         return render_template_with_translations("profile/main/workspaces.html", **params)
 
 @login_required

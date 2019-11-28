@@ -12,14 +12,18 @@ $(function () {
 
 {% block content %}
 <div class="container mt-4">
-    <h1>My profile</h1>
-
-    <h3 class="mt-2">Workspaces</h3>
+    <h1 class="mt-2">Your Workspaces</h1>
 
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
       Add new workspace
     </button>
+
+    <br><br>
+
+    {% for ws in workspace %}
+        {{ ws.title }}
+    {% endfor %}
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
