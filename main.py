@@ -5,7 +5,7 @@ from handlers.admin import users
 from handlers.profile.auth import logout
 from handlers.public import main as public_main, auth
 from handlers.profile import main as profile_main
-from handlers.profile import workspaces as profile_workspaces
+from handlers.profile import workspace as profile_workspaces
 from tasks.send_email_task import send_email_via_sendgrid
 from utils.check_environment import is_local
 from utils.fake_data import load_fake_data

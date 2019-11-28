@@ -1,15 +1,6 @@
-import datetime
-import hashlib
-import logging
-import secrets
-from operator import attrgetter
-
-import bcrypt
 from google.cloud import ndb
 from models import get_db
-from translations.loader import get_translation
-from utils.check_environment import is_local
-from utils.email_helper import send_email
+
 
 client = get_db()
 
@@ -17,6 +8,11 @@ client = get_db()
 class Workspace(ndb.Model):
     title = ndb.StringProperty()
     slug = ndb.StringProperty()
+
+    # properties (ordered by alphabet)
+    @property
+    def get_id(self):
+        return self.key.id()
 
     # class methods (ordered by alphabet)
     @classmethod
@@ -31,6 +27,6 @@ class Workspace(ndb.Model):
                 workspace = cls(title=title, slug=slug)
                 workspace.put()
 
-                return "Success"  # succes, workspace, message
+                return True, workspace, "Success"  # succes, workspace, message
             else:
-                return "Workspace with this slug is already created. Please try again with new slug."
+                return False, None, "Workspace with this slug is already created. Please try again with new slug."
