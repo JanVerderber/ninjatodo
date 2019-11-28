@@ -14,7 +14,7 @@ class WorkspaceUser(ndb.Model):
     def create(cls, id_workspace, id_user):
         with client.context():
             # check if there's any entries with the same data already
-            id_check = cls.query(cls.id_workspace == id_workspace, cls. id_user == id_user).get()
+            id_check = cls.query(cls.id_workspace == id_workspace, cls.id_user == id_user).get()
 
             if not id_check:  # if entry does not yet exist, create one
 

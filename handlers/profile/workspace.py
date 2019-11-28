@@ -1,7 +1,7 @@
 from flask import request, redirect, url_for, abort
 
 from models.workspaces import Workspace
-from models.WorkspaceUser import WorkspaceUser
+from models.workspace_user import WorkspaceUser
 from models.user import User
 from utils.decorators import login_required, set_csrf, validate_csrf
 from utils.translations import render_template_with_translations
