@@ -21,8 +21,9 @@ $(function () {
 
     <br><br>
 
-    {% for ws in workspace %}
-        {{ ws.title }}
+    {% for test in workspaces %}
+        {{ test.title }}
+        {{ test.slug }}
     {% endfor %}
 
     <!-- Modal -->

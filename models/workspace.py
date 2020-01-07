@@ -34,9 +34,9 @@ class Workspace(ndb.Model):
                 return False, None, "Workspace with this slug is already created. Please try again with new slug."
 
     @classmethod
-    def fetch(cls, title=True, slug=True, limit=None, cursor=None):
+    def fetch(cls, limit=None, cursor=None):
         with client.context():
-            workspaces, next_cursor, more = cls.query(cls.title == title, cls.slug == slug).fetch_page(limit, start_cursor=cursor)
+            workspaces, next_cursor, more = cls.query().fetch_page(limit, start_cursor=cursor)
 
             # this fixes the pagination bug which returns more=True even if less users than limit or if next_cursor is
             # the same as the cursor
