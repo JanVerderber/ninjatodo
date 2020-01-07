@@ -5,6 +5,7 @@ from models.workspace_user import WorkspaceUser
 from models.user import User
 from utils.decorators import login_required, set_csrf, validate_csrf
 from utils.translations import render_template_with_translations
+from google.cloud.ndb import Cursor
 
 @login_required
 @set_csrf
@@ -16,11 +17,11 @@ def workspaces_list_handler(**params):
     else:
         cursor = None
 
-    params["workspaces"] = Workspace.fetch(limit=10, cursor=cursor)
+    params["workspaces"], params["next_cursor"], params["more"] = Workspace.fetch(limit=10, cursor=cursor)
 
     if not cursor_arg:
         # normal browser get request
-        return render_template_with_translations("profile/main/workspaces.html", **params)
+        return render_template_with_translations("profile/workspace/workspaces-list.html", **params)
 
 @login_required
 @validate_csrf
