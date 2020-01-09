@@ -1,5 +1,3 @@
-import logging
-
 from google.cloud import ndb
 from models import get_db
 
@@ -32,25 +30,3 @@ class Workspace(ndb.Model):
                 return True, workspace, "Success"  # succes, workspace, message
             else:
                 return False, None, "Workspace with this slug is already created. Please try again with new slug."
-
-    @classmethod
-    def fetch(cls, limit=None, cursor=None):
-        with client.context():
-            workspaces, next_cursor, more = cls.query().fetch_page(limit, start_cursor=cursor)
-
-            # this fixes the pagination bug which returns more=True even if less users than limit or if next_cursor is
-            # the same as the cursor
-            logging.warning("More:")
-            logging.warning(more)
-            logging.warning(type(more))
-            if limit and len(workspaces) < limit:
-                return workspaces, None, False
-
-            logging.warning("More 2:")
-            logging.warning(more)
-            logging.warning(type(more))
-
-            try:
-                return workspaces, next_cursor.urlsafe().decode(), more
-            except AttributeError as e:  # if there's no next_cursor, an AttributeError will occur
-                return workspaces, None, False

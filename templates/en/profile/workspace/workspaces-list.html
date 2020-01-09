@@ -22,8 +22,10 @@ $(function () {
     <br><br>
 
     {% for test in workspaces %}
-        {{ test.title }}<br>
-        {{ test.slug }}
+        Title: {{ test.title }}<br>
+        Slug: {{ test.slug }}<br>
+        Workspace ID: {{ test.id_workspace }}<br>
+        User ID: {{ test.id_user }}
         <br><br>
     {% endfor %}
 

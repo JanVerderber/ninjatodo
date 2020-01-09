@@ -17,7 +17,7 @@ def workspaces_list_handler(**params):
     else:
         cursor = None
 
-    params["workspaces"], params["next_cursor"], params["more"] = Workspace.fetch(limit=10, cursor=cursor)
+    params["workspaces"], params["next_cursor"], params["more"] = WorkspaceUser.fetch(limit=None, cursor=cursor)
 
     if not cursor_arg:
         # normal browser get request
@@ -37,7 +37,7 @@ def workspace_create(**params):
             workspace_id = workspace.get_id
 
             if workspace:
-                WorkspaceUser.create(id_workspace=workspace_id, id_user=user_id)
+                WorkspaceUser.create(id_workspace=workspace_id, id_user=user_id, title=title, slug=slug)
 
                 return redirect(url_for("profile.workspace.workspaces_list_handler"))
 
