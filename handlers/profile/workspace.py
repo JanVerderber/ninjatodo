@@ -17,7 +17,10 @@ def workspaces_list_handler(**params):
     else:
         cursor = None
 
-    params["workspaces"], params["next_cursor"], params["more"] = WorkspaceUser.fetch(limit=None, cursor=cursor)
+    user = params["user"]
+    user_id = user.get_id
+
+    params["workspaces"], params["next_cursor"], params["more"] = WorkspaceUser.fetch(limit=None, cursor=cursor, user=user_id)
 
     if not cursor_arg:
         # normal browser get request

@@ -2,7 +2,6 @@ import logging
 
 from google.cloud import ndb
 from models import get_db
-from models.user import User
 
 
 client = get_db()
@@ -19,7 +18,7 @@ class WorkspaceUser(ndb.Model):
     def create(cls, id_workspace, id_user, title, slug):
         with client.context():
             # check if there's any entries with the same data already
-            id_check = cls.query(cls.id_workspace == id_workspace, cls.id_user == id_user, cls.title == title, cls.slug == slug).get()
+            id_check = cls.query(cls.id_workspace == id_workspace, cls.id_user == id_user).get()
 
             if not id_check:  # if entry does not yet exist, create one
 
@@ -32,21 +31,12 @@ class WorkspaceUser(ndb.Model):
                 return False, None, "Workspace and user relation is already created. Please try again with new workspace and user."
 
     @classmethod
-    def fetch(cls, limit=None, cursor=None):
+    def fetch(cls, limit=None, cursor=None, user=None):
         with client.context():
-            workspaces, next_cursor, more = cls.query(WorkspaceUser.id_user == User.get_id).fetch_page(limit, start_cursor=cursor)
+            workspaces, next_cursor, more = cls.query(WorkspaceUser.id_user == user).fetch_page(limit, start_cursor=cursor)
 
-            # this fixes the pagination bug which returns more=True even if less users than limit or if next_cursor is
-            # the same as the cursor
-            logging.warning("More:")
-            logging.warning(more)
-            logging.warning(type(more))
             if limit and len(workspaces) < limit:
                 return workspaces, None, False
-
-            logging.warning("More 2:")
-            logging.warning(more)
-            logging.warning(type(more))
 
             try:
                 return workspaces, next_cursor.urlsafe().decode(), more
