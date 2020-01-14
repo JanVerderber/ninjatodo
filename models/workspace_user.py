@@ -12,10 +12,12 @@ class WorkspaceUser(ndb.Model):
     id_user = ndb.IntegerProperty()
     title = ndb.StringProperty()
     slug = ndb.StringProperty()
+    created_date = ndb.StringProperty()
+    date_raw = ndb.DateProperty()
 
     # class methods (ordered by alphabet)
     @classmethod
-    def create(cls, id_workspace, id_user, title, slug):
+    def create(cls, id_workspace, id_user, title, slug, created_date, date_raw):
         with client.context():
             # check if there's any entries with the same data already
             id_check = cls.query(cls.id_workspace == id_workspace, cls.id_user == id_user).get()
@@ -23,7 +25,7 @@ class WorkspaceUser(ndb.Model):
             if not id_check:  # if entry does not yet exist, create one
 
                 # create the workspace object and store it into Datastore
-                workspace_user = cls(id_workspace=id_workspace, id_user=id_user, title=title, slug=slug)
+                workspace_user = cls(id_workspace=id_workspace, id_user=id_user, title=title, slug=slug, created_date=created_date, date_raw=date_raw)
                 workspace_user.put()
 
                 return True, workspace_user, "Success"  # succes, workspace, message

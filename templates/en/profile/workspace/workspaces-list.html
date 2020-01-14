@@ -21,13 +21,21 @@ $(function () {
 
     <br><br>
 
-    {% for test in workspaces %}
-        Title: {{ test.title }}<br>
-        Slug: {{ test.slug }}<br>
-        Workspace ID: {{ test.id_workspace }}<br>
-        User ID: {{ test.id_user }}
-        <br><br>
-    {% endfor %}
+    <table>
+        <tr>
+            <th>Workspace</th>
+            <th>Created</th>
+            <th>Tools</th>
+        </tr>
+
+        {% for test in workspaces %}
+            <tr>
+                <td style="width:60%">{{ test.title }}</td>
+                <td>{{ test.created_date }}</td>
+                <td><a href="#">users</a> | <a href="#">edit</a> | <a href="#">delete</a></td>
+            </tr>
+        {% endfor %}
+    </table>
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
