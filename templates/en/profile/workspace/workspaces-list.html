@@ -15,7 +15,7 @@ $(function () {
     <h1 class="mt-2">Your Workspaces</h1>
 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal">
       Add new workspace
     </button>
 
@@ -28,21 +28,46 @@ $(function () {
             <th>Tools</th>
         </tr>
 
-        {% for test in workspaces %}
+        {% for workspace in workspaces %}
             <tr>
-                <td style="width:60%">{{ test.title }}</td>
-                <td>{{ test.created_date }}</td>
-                <td><a href="#">users</a> | <a href="#">edit</a> | <a href="#">delete</a></td>
+                <td style="width:60%">{{ workspace.title }}</td>
+                <td>{{ workspace.created.strftime("%d %b %Y") }}</td>
+                <td><a href="#">users</a> | <a href="#">edit</a> | <a href="#" data-toggle="modal" data-target="#deleteModal{{ workspace.id_workspace }}">delete</a></td>
             </tr>
+
+            <!-- Delete Modal -->
+            <div class="modal fade" id="deleteModal{{ workspace.id_workspace }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ workspace.id_workspace }}" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel{{ workspace.id_workspace }}">Delete workspace</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      <b>Please confirm you want to delete this workspace!</b><br>
+                    <form class="middle-custom-form" method="post" action="{{ url_for('profile.workspace.workspace_delete') }}">
+                        <input type="hidden" name="workspace-id" value="{{ workspace.id_workspace }}">
+                        <input type="hidden" name="csrf" value="{{ csrf }}">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
         {% endfor %}
     </table>
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Create Modal -->
+    <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Add new workspace</h5>
+            <h5 class="modal-title" id="createModalLabel">Add new workspace</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>

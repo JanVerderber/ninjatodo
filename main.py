@@ -33,6 +33,8 @@ app.add_url_rule(rule="/workspaces", endpoint="profile.workspace.workspaces_list
                  methods=["GET"])
 app.add_url_rule(rule="/workspace/create", endpoint="profile.workspace.workspace_create", view_func=profile_workspaces.workspace_create,
                  methods=["POST"])
+app.add_url_rule(rule="/workspace/delete", endpoint="profile.workspace.workspace_delete", view_func=profile_workspaces.workspace_delete,
+                 methods=["POST"])
 
 # PROFILE auth
 app.add_url_rule(rule="/logout", endpoint="profile.auth.logout", view_func=logout, methods=["POST"])

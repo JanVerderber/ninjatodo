@@ -8,8 +8,9 @@ client = get_db()
 class Workspace(ndb.Model):
     title = ndb.StringProperty()
     slug = ndb.StringProperty()
-    created_date = ndb.StringProperty()
-    date_raw = ndb.DateProperty()
+    created = ndb.DateTimeProperty(auto_now_add=True)
+    updated = ndb.DateTimeProperty(auto_now=True)
+    deleted = ndb.BooleanProperty(default=False)
 
     # properties (ordered by alphabet)
     @property
@@ -18,7 +19,7 @@ class Workspace(ndb.Model):
 
     # class methods (ordered by alphabet)
     @classmethod
-    def create(cls, title, slug, created_date, date_raw):
+    def create(cls, title, slug):
         with client.context():
             # check if there's any workspaces with the same slug already
             workspace = cls.query(cls.slug == slug).get()
@@ -26,9 +27,18 @@ class Workspace(ndb.Model):
             if not workspace:  # if workspace does not yet exist, create one
 
                 # create the workspace object and store it into Datastore
-                workspace = cls(title=title, slug=slug, created_date=created_date, date_raw=date_raw)
+                workspace = cls(title=title, slug=slug)
                 workspace.put()
 
                 return True, workspace, "Success"  # succes, workspace, message
             else:
                 return False, None, "Workspace with this slug is already created. Please try again with new slug."
+
+    @classmethod
+    def delete_workspace(cls, workspace):
+        with client.context():
+            workspace_db = Workspace.get_by_id(workspace)
+            workspace_db.deleted = True  # this does NOT delete workspace from Datastore (just marks it as "deleted")
+            workspace_db.put()
+
+        return True
