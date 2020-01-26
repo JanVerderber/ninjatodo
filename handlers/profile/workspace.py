@@ -2,7 +2,6 @@ from flask import request, redirect, url_for, abort
 
 from models.workspace import Workspace
 from models.workspace_user import WorkspaceUser
-from models.user import User
 from utils.decorators import login_required, set_csrf, validate_csrf
 from utils.translations import render_template_with_translations
 from google.cloud.ndb import Cursor
@@ -28,12 +27,25 @@ def workspaces_list_handler(**params):
 
 @login_required
 @set_csrf
-def workspace_delete(**params):
+def delete(**params):
     if request.method == "POST":
         workspace_id = request.form.get("workspace-id")
         int_workspace = int(workspace_id)
-        WorkspaceUser.delete_workspace(int_workspace)
-        Workspace.delete_workspace(int_workspace)
+        WorkspaceUser.delete(int_workspace)
+        Workspace.delete(int_workspace)
+
+        return redirect(url_for("profile.workspace.workspaces_list_handler"))
+
+@login_required
+@set_csrf
+def update(**params):
+    if request.method == "POST":
+        workspace_id = request.form.get("workspace-id")
+        int_workspace = int(workspace_id)
+        title = request.form.get("edit-title")
+        slug = request.form.get("edit-slug")
+        WorkspaceUser.update(int_workspace, title, slug)
+        Workspace.update(int_workspace, title, slug)
 
         return redirect(url_for("profile.workspace.workspaces_list_handler"))
 

@@ -35,10 +35,20 @@ class Workspace(ndb.Model):
                 return False, None, "Workspace with this slug is already created. Please try again with new slug."
 
     @classmethod
-    def delete_workspace(cls, workspace):
+    def delete(cls, workspace):
         with client.context():
             workspace_db = Workspace.get_by_id(workspace)
             workspace_db.deleted = True  # this does NOT delete workspace from Datastore (just marks it as "deleted")
+            workspace_db.put()
+
+        return True
+
+    @classmethod
+    def update(cls, workspace, title, slug):
+        with client.context():
+            workspace_db = Workspace.get_by_id(workspace)
+            workspace_db.title = title
+            workspace_db.slug = slug
             workspace_db.put()
 
         return True

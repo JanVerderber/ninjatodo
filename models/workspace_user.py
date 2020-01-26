@@ -47,10 +47,20 @@ class WorkspaceUser(ndb.Model):
                 return workspaces, None, False
 
     @classmethod
-    def delete_workspace(cls, workspace):
+    def delete(cls, workspace):
         with client.context():
             workspace_db = cls.query(cls.id_workspace == workspace).get()
             workspace_db.deleted = True  # this does NOT delete workspace from Datastore (just marks it as "deleted")
+            workspace_db.put()
+
+        return True
+
+    @classmethod
+    def update(cls, workspace, title, slug):
+        with client.context():
+            workspace_db = cls.query(cls.id_workspace == workspace).get()
+            workspace_db.title = title
+            workspace_db.slug = slug
             workspace_db.put()
 
         return True
