@@ -1,3 +1,5 @@
+import datetime
+
 from google.cloud import ndb
 from models import get_db
 
@@ -44,11 +46,11 @@ class Workspace(ndb.Model):
         return True
 
     @classmethod
-    def update(cls, workspace, title, slug):
+    def update(cls, workspace, title):
         with client.context():
             workspace_db = Workspace.get_by_id(workspace)
             workspace_db.title = title
-            workspace_db.slug = slug
+            workspace_db.updated = datetime.datetime.now()
             workspace_db.put()
 
         return True

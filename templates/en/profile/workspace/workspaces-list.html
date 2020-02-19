@@ -32,7 +32,7 @@ $(function () {
             <tr>
                 <td style="width:60%">{{ workspace.title }}</td>
                 <td>{{ workspace.created.strftime("%d %b %Y") }}</td>
-                <td><a href="#">users</a> | <a href="#" data-toggle="modal" data-target="#editModal{{ workspace.id_workspace }}">edit</a> | <a href="#" data-toggle="modal" data-target="#deleteModal{{ workspace.id_workspace }}">delete</a></td>
+                <td><a href="/workspace/{{ workspace.slug }}/users">users</a> | <a href="#" data-toggle="modal" data-target="#editModal{{ workspace.id_workspace }}">edit</a> | <a href="#" data-toggle="modal" data-target="#deleteModal{{ workspace.id_workspace }}">delete</a></td>
             </tr>
 
             <!-- Delete Modal -->
@@ -76,10 +76,6 @@ $(function () {
                             <label for="edit-title">Title</label>
                             <input type="text" name="edit-title" id="edit-title" value="{{ workspace.title }}">
                         </div>
-                        <div class="form-group">
-                            <label for="edit-slug">Slug</label>
-                            <input type="text" name="edit-slug" id="edit-slug" value="{{ workspace.slug }}">
-                        </div>
                         <input type="hidden" name="workspace-id" value="{{ workspace.id_workspace }}">
                         <input type="hidden" name="csrf" value="{{ csrf }}">
                         <button type="submit" class="btn btn-danger">Update</button>
@@ -105,7 +101,7 @@ $(function () {
             </button>
           </div>
           <div class="modal-body">
-            <form class="middle-custom-form" method="post" action="/workspace/create">
+            <form class="middle-custom-form" method="post" action="{{ url_for('profile.workspace.workspace_create') }}">
                 <div class="form-group">
                     <label for="title">Title</label>
                     <input type="text" class="form-control" id="title" name="title" placeholder="Enter title">
@@ -114,6 +110,7 @@ $(function () {
                     <label for="slug">Slug</label>
                     <input type="text" class="form-control" id="slug" name="slug" placeholder="Enter slug">
                 </div>
+                <input type="hidden" name="is-owner" value="True">
                 <input type="hidden" name="csrf" value="{{ csrf }}">
                 <button type="submit" class="btn btn-success">Submit</button>
             </form>
