@@ -35,9 +35,15 @@ def workspaces_list_handler(**params):
 @set_csrf
 def users_list_handler(slug, **params):
     users_dicts = []
-    with client.context():
-        selected_workspace = WorkspaceUser.query(WorkspaceUser.slug == slug, WorkspaceUser.deleted == False).fetch()
-        all_users = User.query().fetch()
+    cursor_arg = request.args.get('cursor')
+
+    if cursor_arg:
+        cursor = Cursor(urlsafe=cursor_arg.encode())
+    else:
+        cursor = None
+
+    selected_workspace, params["next_cursor"], params["more"] = WorkspaceUser.fetch_by_slug(limit=None, cursor=cursor, slug=slug)
+    all_users, params["next_cursor_users"], params["more_users"] = User.fetch(email_address_verified=True, suspended=False, deleted=False, limit=None, cursor=cursor)
 
     for workspace_user_info in selected_workspace:
         user = workspace_user_info.id_user
@@ -67,9 +73,11 @@ def remove_workspace_user(**params):
     if request.method == "POST":
         workspace_user_id = request.form.get("workspace-user-id")
         workspace_user_id = int(workspace_user_id)
+        selected_workspace, params["next_cursor"], params["more"] = WorkspaceUser.fetch_by_user_id(limit=None, id_user=workspace_user_id)
+        slug = selected_workspace.slug
         WorkspaceUser.delete_by_user(workspace_user_id)
 
-        return redirect(url_for("profile.workspace.workspaces_list_handler"))  # FIX: Redirect to users list
+        return redirect(url_for("profile.workspace.users_list_handler", slug=slug))
 
 @login_required
 @set_csrf
@@ -95,6 +103,7 @@ def workspace_create(**params):
         is_owner = request.form.get("is-owner")
         user = params["user"]
         user_id = user.get_id
+        cursor_arg = request.args.get('cursor')
 
         if is_owner == "True":
             is_owner = True
@@ -102,19 +111,22 @@ def workspace_create(**params):
         else:
             is_owner = False
 
+        if cursor_arg:
+            cursor = Cursor(urlsafe=cursor_arg.encode())
+        else:
+            cursor = None
+
         if add_user == "True":
-            with client.context():
-                if add_user_id and id_workspace:
-                    add_user_id = int(add_user_id)
-                    id_workspace = int(id_workspace)
-                    workspace_user_info = WorkspaceUser.query(WorkspaceUser.id_workspace == id_workspace, WorkspaceUser.deleted == False).fetch(limit=1)
-                    for x in workspace_user_info:
-                        title = x.title
-                        slug = x.slug
+            if add_user_id and id_workspace:
+                add_user_id = int(add_user_id)
+                id_workspace = int(id_workspace)
+                workspace_user_info, params["next_cursor"], params["more"] = WorkspaceUser.fetch_by_id(limit=1, cursor=cursor, id_workspace=id_workspace)
+                title = workspace_user_info.title
+                slug = workspace_user_info.slug
 
             WorkspaceUser.create(id_workspace=id_workspace, id_user=add_user_id, title=title, slug=slug, is_owner=is_owner)
 
-            return redirect(url_for("profile.workspace.workspaces_list_handler"))  # FIX: Redirect to users list
+            return redirect(url_for("profile.workspace.users_list_handler", slug=slug))
 
         else:
             if title and slug:

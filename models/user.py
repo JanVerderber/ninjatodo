@@ -119,15 +119,8 @@ class User(ndb.Model):
 
             # this fixes the pagination bug which returns more=True even if less users than limit or if next_cursor is
             # the same as the cursor
-            logging.warning("More:")
-            logging.warning(more)
-            logging.warning(type(more))
             if limit and len(users) < limit:
                 return users, None, False
-
-            logging.warning("More 2:")
-            logging.warning(more)
-            logging.warning(type(more))
 
             try:
                 return users, next_cursor.urlsafe().decode(), more

@@ -62,11 +62,31 @@ class WorkspaceUser(ndb.Model):
                 return workspaces, None, False
 
     @classmethod
-    def get_workspace_user_by_id(cls, workspace_id):
+    def fetch_by_id(cls, limit=None, cursor=None, id_workspace=None):
         with client.context():
-            workspace = WorkspaceUser.get_by_id(int(workspace_id))
+            workspace_user, next_cursor, more = cls.query(WorkspaceUser.id_workspace == id_workspace, cls.deleted == False).fetch_page(
+                limit, start_cursor=cursor)
 
-            return workspace
+            if limit and len(workspace_user) < limit:
+                return workspace_user, None, False
+
+            try:
+                return workspace_user, next_cursor.urlsafe().decode(), more
+            except AttributeError as e:  # if there's no next_cursor, an AttributeError will occur
+                return workspace_user, None, False
+
+    @classmethod
+    def fetch_by_user_id(cls, limit=None, cursor=None, id_user=None):
+        with client.context():
+            workspace_user, next_cursor, more = cls.query(WorkspaceUser.id_user == id_user, cls.deleted == False).fetch_page(limit, start_cursor=cursor)
+
+            if limit and len(workspace_user) < limit:
+                return workspace_user, None, False
+
+            try:
+                return workspace_user, next_cursor.urlsafe().decode(), more
+            except AttributeError as e:  # if there's no next_cursor, an AttributeError will occur
+                return workspace_user, None, False
 
     @classmethod
     def delete(cls, workspace):
